@@ -16,6 +16,7 @@ from ..config.settings import get_settings
 from .timezone_utils import utcnow_naive
 from ..database.models import AppLog
 from ..database.session import get_db
+from .timezone_utils import utcnow_naive
 
 
 _INSTALL_LOCK = threading.Lock()

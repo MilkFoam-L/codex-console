@@ -9,7 +9,8 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Optional, List, Callable, Any, Set, Tuple
 from collections import defaultdict
-from datetime import datetime
+
+from ..core.timezone_utils import utcnow_naive
 
 from ..core.timezone_utils import utcnow_naive
 
