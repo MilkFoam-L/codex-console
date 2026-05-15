@@ -425,7 +425,10 @@ class TempMailService(BaseEmailService):
         """从详情接口响应里提取单封邮件对象。"""
         if isinstance(response, dict):
             if response:
-                if all(k in response for k in ("subject", "text")) or response.get("raw"):
+                if (
+                    (response.get("subject") and (response.get("text") or response.get("html") or response.get("body")))
+                    or response.get("raw")
+                ):
                     return response
                 for key in ("mail", "data", "result", "item"):
                     value = response.get(key)
@@ -756,10 +759,6 @@ class TempMailService(BaseEmailService):
                     raw_text = parsed["raw"]
                     content = f"{sender}\n{subject}\n{body_text}\n{raw_text}".strip()
 
-                    # 只处理 OpenAI 验证码类邮件（避免误命中通知类邮件）
-                    if not self._is_openai_otp_mail(sender, subject, body_text, raw_text):
-                        continue
-
                     code, semantic_hit = self._extract_otp_code(content, pattern)
                     if not code:
                         # 部分部署列表接口只含摘要；尝试拉单封详情再匹配一次。
@@ -783,6 +782,14 @@ class TempMailService(BaseEmailService):
                             ):
                                 continue
                             code, semantic_hit = self._extract_otp_code(detail_content, pattern)
+                            sender = detail_parsed["sender"].lower()
+                            subject = detail_parsed["subject"]
+                            body_text = detail_parsed["body"]
+                            raw_text = detail_parsed["raw"]
+
+                    # 只处理 OpenAI 验证码类邮件（避免误命中通知类邮件）。列表无正文时，先拉详情再判断。
+                    if not self._is_openai_otp_mail(sender, subject, body_text, raw_text):
+                        continue
 
                     if not code:
                         continue
