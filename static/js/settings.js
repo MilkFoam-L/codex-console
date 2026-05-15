@@ -1666,9 +1666,9 @@ async function handleSaveSub2ApiService(e) {
     e.preventDefault();
     const id = document.getElementById('sub2api-service-id').value;
     const data = {
-        name: document.getElementById('sub2api-service-name').value,
-        api_url: document.getElementById('sub2api-service-url').value,
-        api_key: document.getElementById('sub2api-service-key').value || undefined,
+        name: document.getElementById('sub2api-service-name').value.trim(),
+        api_url: document.getElementById('sub2api-service-url').value.trim(),
+        api_key: document.getElementById('sub2api-service-key').value.trim() || undefined,
         target_type: document.getElementById('sub2api-service-target-type').value || 'sub2api',
         priority: parseInt(document.getElementById('sub2api-service-priority').value) || 0,
         enabled: document.getElementById('sub2api-service-enabled').checked,
